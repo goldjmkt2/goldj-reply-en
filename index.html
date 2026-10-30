@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>골드제이 스레드 답글기 영어</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Gowun+Batang:wght@700&display=swap">
+<style>
+/* Layout: two-pane workbench — 원글 입력·분류(왼쪽) → 답글 결과(오른쪽), 설정은 상단 접이식 */
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --ink:#22201b; --muted:#6f6a5e; --line:#e4dfd3;
+  --gold:#a67c1e; --gold-soft:#f3ead3; --warn:#b4471f; --warn-soft:#fbe9e1; --ok:#2f7a4f; --ok-soft:#e3f2e8;
+  --f-ui:"Noto Sans KR",system-ui,sans-serif;
+  --f-zh:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  --f-display:"Gowun Batang","Noto Sans KR",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17150f; --panel:#211e17; --ink:#efe9da; --muted:#a59d8a; --line:#38332a;
+  --gold:#d9ae4f; --gold-soft:#3a3120; --warn:#f08a62; --warn-soft:#3d241a; --ok:#6fcf97; --ok-soft:#1c3226; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17150f; --panel:#211e17; --ink:#efe9da; --muted:#a59d8a; --line:#38332a;
+  --gold:#d9ae4f; --gold-soft:#3a3120; --warn:#f08a62; --warn-soft:#3d241a; --ok:#6fcf97; --ok-soft:#1c3226; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.6}
+.wrap{max-width:1440px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px}
+h1{font-family:var(--f-display);font-size:26px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 span{color:var(--gold)}
+h1 .lang{font-family:var(--f-zh);font-size:.55em;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;vertical-align:middle}
+.sub{color:var(--muted);margin:2px 0 0}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+textarea,input[type=text],input[type=number],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+textarea{min-height:150px;resize:vertical;font-family:var(--f-zh)}
+textarea:focus,input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px}
+button.primary{background:var(--gold);border-color:var(--gold);color:var(--panel);font-weight:700}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.chip.on{background:var(--gold-soft);border-color:var(--gold);color:var(--ink);font-weight:700}
+.tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--gold-soft);color:var(--ink)}
+.kw{font-size:12px;color:var(--muted)}
+.postko{font-size:12.5px;line-height:1.6;color:var(--muted);background:var(--bg);border-left:2px solid var(--gold);padding:6px 10px;margin-top:-4px;white-space:pre-wrap}
+.postko .lbl{display:block;font-size:11px;letter-spacing:.04em;color:var(--gold);font-weight:700;margin-bottom:2px}
+.out.edit{width:100%;min-height:260px;resize:vertical;display:block;color:var(--ink);font:15px/1.75 var(--f-zh)}
+.out.edit:focus{outline:2px solid var(--gold);outline-offset:1px;background:var(--panel)}
+.out{font-family:var(--f-zh);white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;min-height:120px;font-size:15px;line-height:1.75}
+.ko{font-family:var(--f-ui);font-size:13.5px;color:var(--muted)}
+.alert{border-radius:8px;padding:10px 12px;font-size:13px}
+.alert.warn{background:var(--warn-soft);color:var(--warn)}
+.alert.ok{background:var(--ok-soft);color:var(--ok)}
+.alert.note{background:var(--gold-soft);color:var(--ink)}
+details.panel{display:block}
+.setbody{display:grid;gap:12px;margin-top:12px;min-width:0}
+.setbody>*{min-width:0}
+details.panel>summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.panel>summary::after{content:"열기";font-size:12px;color:var(--muted);font-weight:400}
+details.panel[open]>summary::after{content:"닫기"}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+label{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
+label.check{display:flex;gap:6px;align-items:center;color:var(--ink);font-size:13px}
+.tablewrap{overflow-x:auto;min-width:0;max-width:100%}
+.panel>*{min-width:0}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td input{padding:6px 8px}
+.num{font-variant-numeric:tabular-nums}
+.foot{color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:start}
+.main{display:grid;gap:16px;min-width:0}
+@media (max-width:1100px){.layout{grid-template-columns:minmax(0,1fr)}}
+.refs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.refs ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.refs a{display:grid;gap:1px;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;border:1px solid transparent}
+.refs a:hover{background:var(--gold-soft);border-color:var(--line)}
+.refs a:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.refs .h{font-weight:700;font-size:13.5px}
+.refs .n{font-size:12px;color:var(--muted)}
+.refs .h::after{content:" ↗";color:var(--gold);font-weight:400}
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:end;border-top:1px dashed var(--line);padding-top:12px}
+.del{padding:4px 8px;font-size:12px;color:var(--warn)}
+#addMsg.err{color:var(--warn);font-weight:700}
+#addMsg.ok{color:var(--ok);font-weight:700}
+tr.new td{background:var(--gold-soft);transition:background 1.5s}
+input[aria-invalid="true"]{border-color:var(--warn)}
+.savebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.savebar .dirty{color:var(--warn)}
+.selchip{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:4px 6px 4px 12px;border-radius:999px;background:var(--gold-soft);border:1px solid var(--gold)}
+.selchip button{border:0;background:transparent;padding:0 6px;font-size:15px;line-height:1;color:var(--muted)}
+.addmore{grid-column:1/-1}
+.addmore summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
+.addmore .form{margin-top:8px}
+.tabbar,.mobile-only{display:none}
+@media (max-width:760px){
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
+  .wrap{padding-block:12px 16px;gap:12px}
+  h1{font-size:20px}
+  .sub{display:none}
+  .mobile-only{display:block}
+  [data-pane]:not(.on){display:none!important}
+  details#settingsBox>summary{display:none}
+  details#settingsBox .setbody{margin-top:0}
+  .refs{position:static}
+  .panel{padding:14px;border-radius:12px}
+  input[type=text],input[type=number],select,textarea{font-size:16px}
+  button{min-height:44px;padding:10px 16px}
+  .chip{font-size:13px;padding:8px 12px;min-height:36px}
+  #post{min-height:200px}
+  .out.edit{min-height:42vh}
+  .row>button.primary{flex:1}
+  .copyrow{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--panel);padding-block:8px;margin-inline:-14px;padding-inline:14px;border-top:1px solid var(--line)}
+  .copyrow #copyBtn{flex:1}
+  .typeline{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+  .typeline button{min-height:36px;padding:6px 12px;font-size:13px}
+  #priceSelect{max-width:none!important;width:100%}
+  .refs a{padding:12px}
+  .tablewrap{overflow:visible}
+  .tablewrap table{min-width:0}
+  .tablewrap thead{display:none}
+  .tablewrap tbody{display:grid;gap:10px}
+  .tablewrap tr{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
+  .tablewrap td{display:grid;gap:3px;border:0;padding:0;font-size:12px;color:var(--muted)}
+  .tablewrap td::before{content:attr(data-label)}
+  .tablewrap td:first-child{grid-column:1/-1;font-size:15px;font-weight:700;color:var(--ink)}
+  .tablewrap td:first-child::before{content:none}
+  .tablewrap td:last-child:empty{display:none}
+  .tablewrap td:last-child::before{content:none}
+  .tablewrap td:nth-child(2){grid-column:1/-1}
+  .addform{grid-template-columns:1fr 1fr}
+  .addform label:nth-child(1),.addform label:nth-child(2),.addform #addBtn,.addform .addmore{grid-column:1/-1}
+  .savebar{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--panel);z-index:5;margin-inline:-14px;padding:10px 14px}
+  .savebar #saveBtn{flex:1}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--panel);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))}
+  .tabbar button{border:0;background:transparent;border-radius:10px;min-height:52px;font-size:13px;color:var(--muted);padding:6px 4px}
+  .tabbar button[aria-current="page"]{color:var(--ink);font-weight:700;background:var(--gold-soft)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>골드제이 <span>스레드 답글기</span> <small class="lang">EN</small></h1>
+      <p class="sub">영어 스레드 원글을 붙여넣으면 유형을 분류하고 영어 답글과 한국어 해석을 만들어요. 피부 글뿐 아니라 한국여행 글에도 답할 수 있어요.</p>
+    </div>
+  </header>
+
+  <div class="layout">
+  <div class="main">
+  <details class="panel" id="settingsBox" data-pane="set">
+    <summary>병원 설정 <span class="kw" id="setStatus"></span></summary>
+    <div class="setbody">
+    <div class="form">
+      <label for="sClinic">병원명 (영어 표기)<input type="text" id="sClinic"></label>
+      <label for="sClinicKo">병원명 (한국어)<input type="text" id="sClinicKo"></label>
+      <label for="sCity">병원 도시 (영어)<input type="text" id="sCity" placeholder="Seoul"></label>
+      <label for="sLoc">위치 (영어) — 예: 3 min walk from ○○ Station Exit ○<input type="text" id="sLoc"></label>
+      <label for="sLocKo">위치 (한국어)<input type="text" id="sLocKo"></label>
+      <label for="sRate">환율 (1원 = $)<input type="number" step="0.0001" id="sRate"></label>
+      <label for="sTax">가격 부가세 표기<select id="sTax"><option value="">표시 안 함</option><option value="VAT incl.">VAT incl. (부가세 포함)</option><option value="+VAT">+VAT (부가세 별도)</option></select></label>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" id="sZh">영어 상담 가능</label>
+      <label class="check"><input type="checkbox" id="sDoc">원장 직접 상담·시술</label>
+      <label class="check"><input type="checkbox" id="sPromo">여행 글 답글에 피부과 한 줄 넣기</label>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>시술</th><th>영어 표기</th><th>단위 (예: 300 shots, 1cc)</th><th class="num">가격 (원)</th><th></th></tr></thead>
+        <tbody id="procRows"></tbody>
+      </table>
+    </div>
+    <div class="addform" id="addForm">
+      <label for="nKo">시술명 (한국어, 필수)<input type="text" id="nKo" placeholder="예: 써마지"></label>
+      <label for="nZh">영어 표기 (필수)<input type="text" id="nZh" placeholder="예: Thermage"></label>
+      <label for="nUnit">단위<input type="text" id="nUnit" placeholder="예: 600 shots"></label>
+      <label for="nKrw">가격 (원)<input type="text" inputmode="numeric" class="num" id="nKrw" placeholder="예: 1790000"></label>
+      <button id="addBtn" type="button">＋ 시술 추가</button>
+      <details class="addmore">
+        <summary>더 입력하기 (선택) — 고민 분류·효과·원글 감지 단어</summary>
+        <div class="form">
+          <label for="nCat">고민 분류<select id="nCat"></select></label>
+          <label for="nEffZh">효과 (영어)<input type="text" id="nEffZh" placeholder="e.g. tightening and firmness"></label>
+          <label for="nEffKo">효과 (한국어)<input type="text" id="nEffKo" placeholder="예: 탄력·콜라겐"></label>
+          <label for="nKw">원글 감지 단어 (쉼표로)<input type="text" id="nKw" placeholder="예: thermage, thermage flx"></label>
+        </div>
+      </details>
+    </div>
+    <p class="kw" id="addMsg" style="margin:0"></p>
+    <div class="savebar">
+      <button class="primary" id="saveBtn" type="button">저장</button>
+      <span class="kw" id="saveMsg">가격을 넣고 저장하면 답글 칸의 ‘가격 넣기’에서 고를 수 있어요.</span>
+    </div>
+    <p class="foot">설정은 이 브라우저에만 저장돼요.</p>
+    </div>
+  </details>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="inTitle" data-pane="in">
+      <h2 id="inTitle">1. 원글</h2>
+      <p class="mobile-only kw" style="margin:0">원글 칸을 길게 눌러 붙여넣은 뒤 ‘답글 만들기’를 누르세요.</p>
+      <div class="chips" id="samples"></div>
+      <textarea id="post" placeholder="스레드 원글을 붙여넣으세요 (영어·한국어 모두 가능)"></textarea>
+      <div class="postko" id="postKo" hidden aria-live="polite"><span class="lbl">한국어 해석</span><span id="postKoText"></span></div>
+      <div class="row">
+        <button class="primary" id="goBtn">답글 만들기</button>
+        <button id="clearBtn">지우기</button>
+      </div>
+      <div id="analysis" class="grid" style="grid-template-columns:minmax(0,1fr);gap:10px"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="outTitle" data-pane="out">
+      <div class="row" style="justify-content:space-between">
+        <h2 id="outTitle">2. 답글</h2>
+        <div class="row">
+          <button id="rerollBtn" disabled>문구 바꾸기</button>
+        </div>
+      </div>
+      <div class="mobile-only typeline"><span id="typeLine">아직 만든 답글이 없어요.</span><button type="button" id="typeBtn">유형 바꾸기</button></div>
+      <textarea class="out edit" id="outZh" aria-label="영어 답글 (직접 수정 가능)" placeholder="원글을 넣고 ‘답글 만들기’를 누르세요."></textarea>
+      <p class="kw" id="editHint" style="margin:-4px 0 0">답글 칸을 눌러 바로 고칠 수 있어요. 수정한 내용 그대로 복사돼요.</p>
+      <div class="row copyrow">
+        <button class="primary" id="copyBtn" disabled>영어 답글 복사</button>
+        <span class="kw" id="copyMsg"></span>
+      </div>
+      <div>
+        <h2 style="margin-bottom:6px"><label for="priceSelect">가격 넣기</label></h2>
+        <div class="row">
+          <select id="priceSelect" style="max-width:340px"></select>
+        </div>
+        <div class="chips" id="priceChips" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <h2 style="margin-bottom:6px">한국어 해석</h2>
+        <p class="kw" id="koNote" hidden style="margin:0 0 6px">답글을 직접 고쳐서 아래 해석은 처음 생성된 문장 기준이에요.</p>
+        <div class="out ko" id="outKo"></div>
+      </div>
+      <div id="checks" style="display:grid;gap:8px"></div>
+    </section>
+  </div>
+  <p class="foot" data-pane="out">자동 분류는 키워드 기준이라 틀릴 수 있어요. 유형 칩을 눌러 직접 바꿀 수 있고, 게시 전에는 꼭 사람이 한 번 읽어 주세요.</p>
+  </div>
+  <aside class="panel refs" aria-labelledby="refTitle" data-pane="ref">
+    <h2 id="refTitle">참고병원</h2>
+    <ul id="refList"></ul>
+    <p class="foot" style="margin:0">누르면 새 탭에서 스레드 계정이 열려요.</p>
+  </aside>
+  </div>
+</div>
+<nav class="tabbar" aria-label="화면 전환">
+  <button type="button" data-tab="in" aria-current="page">원글</button>
+  <button type="button" data-tab="out">답글</button>
+  <button type="button" data-tab="set">병원 설정</button>
+  <button type="button" data-tab="ref">참고병원</button>
+</nav>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const pick=(arr,r)=>arr[Math.floor(r()*arr.length)%arr.length];
+let seed=1; const rnd=()=>Math.random();
+
+/* ---------- 시술 · 고민 ---------- */
+const CONCERNS={
+  lift:{zh:"Sagging & jawline",ko:"처짐·턱선",kw:["sagging","saggy","jawline","jowl","lifting","double chin","laugh lines","nasolabial","contour","v-line","firming","턱선","처짐"]},
+  wrinkle:{zh:"Fine lines",ko:"잔주름",kw:["fine lines","wrinkle","crow's feet","forehead lines","주름"]},
+  pore:{zh:"Pores & acne scars",ko:"모공·흉터",kw:["pores","acne scar","scars","acne","texture","pitted","모공","흉터"]},
+  repair:{zh:"Texture & hydration",ko:"피부결·수분",kw:["dry skin","dehydrated","hydration","glass skin","barrier","sensitive","skin booster","피부결"]},
+  elastic:{zh:"Firmness & volume",ko:"탄력·볼륨",kw:["elasticity","volume","hollow","sunken","plump","탄력"]},
+  dull:{zh:"Dullness & pigmentation",ko:"칙칙함·잡티",kw:["dull","pigmentation","dark spots","melasma","uneven tone","brighten","칙칙"]}
+};
+const PROCS=[
+  {id:"ulthera",ko:"울쎄라",zh:"Ulthera",unit:"300 shots",c:["lift"],effZh:"lifting and jawline definition",effKo:"리프팅·턱선",alias:["ulthera","ultherapy","울쎄라"]},
+  {id:"tune",ko:"튠라이너",zh:"Tune Liner",unit:"",c:["lift"],effZh:"contouring and jawline",effKo:"윤곽·턱선",alias:["tune liner","튠라이너"]},
+  {id:"sofwave",ko:"소프웨이브",zh:"Sofwave",unit:"",c:["wrinkle","lift"],effZh:"fine lines and tightening",effKo:"잔주름·탄력",alias:["sofwave","소프웨이브"]},
+  {id:"juvecell",ko:"쥬브아셀",zh:"Juvecell",unit:"",c:["wrinkle"],effZh:"fine lines",effKo:"잔주름",alias:["juvecell","juveacell","쥬브아셀"]},
+  {id:"juvelook",ko:"쥬베룩",zh:"Juvelook",unit:"1cc",c:["pore","repair"],effZh:"pores and skin texture",effKo:"모공·피부결",alias:["juvelook","쥬베룩"]},
+  {id:"potenza",ko:"포텐자쥬베룩",zh:"Potenza + Juvelook",unit:"",c:["pore"],effZh:"acne scars and pores",effKo:"여드름 흉터·모공",alias:["potenza","포텐자"]},
+  {id:"mirajet",ko:"미라젯쥬베룩",zh:"Mirajet + Juvelook",unit:"",c:["pore"],effZh:"acne scars",effKo:"여드름 흉터",alias:["mirajet","미라젯"]},
+  {id:"rejuran",ko:"리쥬란",zh:"Rejuran",unit:"1cc",c:["repair"],effZh:"skin repair and texture",effKo:"재생·피부결",alias:["rejuran","리쥬란"]},
+  {id:"re2o",ko:"리투오",zh:"Re2O",unit:"",c:["repair","elastic"],effZh:"skin barrier and firmness",effKo:"피부장벽·탄력",alias:["re2o","리투오"]},
+  {id:"radiesse",ko:"레디어스",zh:"Radiesse",unit:"",c:["elastic"],effZh:"firmness and volume",effKo:"탄력·볼륨",alias:["radiesse","레디어스"]},
+  {id:"geneo",ko:"제네오엑스",zh:"Geneo X",unit:"",c:["dull"],effZh:"dullness and radiance",effKo:"칙칙함·광채",alias:["geneo","제네오"]},
+  {id:"oxygen",ko:"고압산소",zh:"Hyperbaric oxygen",unit:"",c:["dull"],effZh:"radiance and a fresh look",effKo:"혈색·광채",alias:["hyperbaric","oxygen therapy","고압산소"]}
+];
+function ALL(){return PROCS.concat(S.custom||[]);}
+const MED=["clinic","derm","dermatolog","treatment","botox","filler","laser","skin booster","aesthetic","procedure","피부과","시술"];
+
+/* ---------- 유형 ---------- */
+const TYPES={
+  T1:{name:"병원 추천 요청",kw:["skin clinic","clinic rec","clinic recommendation","dermatologist","derm rec","which clinic","good clinic","any clinic","추천"]},
+  T2:{name:"가격 문의·비교",kw:["how much","price","cost","expensive","cheap","budget","worth the money","half the price","가격","얼마"]},
+  T3:{name:"나이·고민별 추천",kw:["in my 20s","in my 30s","in my 40s","20s","30s","40s","what treatment","what should i get","first time getting"]},
+  T4:{name:"후기·조합 추천 글",kw:["i got","i did","just got","my experience","worth every","regret","combo","results","before and after"]},
+  T5:{name:"시술 상식 질문",kw:["how many sessions","how long does","last","downtime","shots","how often","difference between","vs","recovery"]},
+  T6:{name:"통증·통역 걱정",kw:["painful","hurt","pain","numbing","english","language barrier","translator","speak korean"]},
+  T7:{name:"만족 시술 설문",kw:["favorite treatment","favourite treatment","best treatment you","which treatment was worth","what treatment did you"]},
+  T9:{name:"적합 여부 질문",kw:["does it work","does it actually","will it","is it worth","good for","help with","suitable","just hype"]},
+  T10:{name:"피부관리·홈케어",kw:["skincare","skin care","routine","glass skin","sunscreen","olive young","products","glow","secret"]},
+  T11:{name:"우리에 없는 시술 문의",kw:[]},
+  T12:{name:"서울 외 지역 질문",kw:[]},
+  T13:{name:"여행 질문 (피부 외)",kw:["itinerary","trip","travel","visiting","first time in","things to do","must-see","must see","where to eat","food","cafe","what to pack","pack","weather","going to korea","going to seoul","recs","drop your","attractions","jeju","busan","seoul"]},
+  T8:{name:"일상·비시술 글",kw:[]}
+};
+const PRIORITY=["T7","T6","T9","T5","T10","T1","T2","T3","T4"];
+
+/* ---------- 설정 ---------- */
+const DEF={clinic:"GOLD J Clinic",clinicKo:"골드제이의원",city:"Seoul",loc:"",locKo:"",rate:0.00072,promo:true,tax:"",zh:true,doc:true,procs:{},custom:[]};
+let S=load();
+function load(){try{const v=JSON.parse(localStorage.getItem("gj-reply-settings-en")||"null");if(v)return Object.assign({},DEF,v,{procs:Object.assign({},v.procs||{}),custom:Array.isArray(v.custom)?v.custom:[]});}catch(e){}return JSON.parse(JSON.stringify(DEF));}
+function save(){try{localStorage.setItem("gj-reply-settings-en",JSON.stringify(S));}catch(e){} status();}
+function P(p){const o=S.procs[p.id]||{};return {zh:o.zh||p.zh,unit:o.unit!==undefined?o.unit:p.unit,krw:o.krw||""};}
+function status(){const miss=[];if(!S.loc)miss.push("위치");if(!ALL().some(p=>P(p).krw))miss.push("가격");$("setStatus").textContent=miss.length?"· 비어 있음: "+miss.join(", "):"· 입력 완료";}
+const FIELDS={sClinic:"clinic",sClinicKo:"clinicKo",sLoc:"loc",sLocKo:"locKo",sRate:"rate",sCity:"city",sTax:"tax"};
+function markDirty(){$("saveMsg").textContent="저장하지 않은 변경이 있어요.";$("saveMsg").className="kw dirty";}
+function commit(){
+  for(const [id,k] of Object.entries(FIELDS)){const v=$(id).value.trim();S[k]=k==="rate"?(parseFloat(v)||0):v;}
+  S.zh=$("sZh").checked;S.doc=$("sDoc").checked;S.promo=$("sPromo").checked;
+  ALL().forEach(p=>{const o=S.procs[p.id]=S.procs[p.id]||{};o.zh=$("pz-"+p.id).value.trim();o.unit=$("pu-"+p.id).value.trim();o.krw=$("pk-"+p.id).value.replace(/[^0-9]/g,"");});
+}
+function saveAll(msg){
+  commit();save();
+  for(const id of [...state.priceSel]){if(!P(ALL().find(p=>p.id===id)||{id}).krw)state.priceSel.delete(id);}
+  renderPriceChips();if(state.a)generate();
+  const t=new Date();$("saveMsg").textContent=(msg||"저장했어요")+` · ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;$("saveMsg").className="kw";
+}
+function bindSettings(){
+  for(const [id,k] of Object.entries(FIELDS)){$(id).value=S[k]??"";$(id).addEventListener("input",markDirty);$(id).addEventListener("change",markDirty);}
+  for(const [id,k] of [["sZh","zh"],["sDoc","doc"],["sPromo","promo"]]){$(id).checked=!!S[k];$(id).addEventListener("change",markDirty);}
+  renderRows();
+  $("nCat").innerHTML=Object.entries(CONCERNS).map(([k,v])=>`<option value="${k}">${v.ko}</option>`).join("")+`<option value="other">기타</option>`;
+  $("addBtn").addEventListener("click",addProc);
+  ["nKo","nZh","nUnit","nKrw"].forEach(i=>$(i).addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addProc();}}));
+  $("saveBtn").addEventListener("click",()=>saveAll());
+  $("priceSelect").addEventListener("change",e=>{const id=e.target.value;if(id){state.priceSel.add(id);renderPriceChips();if(state.a)generate();}});
+  status();
+}
+function renderRows(){
+  $("procRows").innerHTML=ALL().map(p=>{const v=P(p);const custom=p.id.startsWith("c_");return `<tr><td>${esc(p.ko)}</td><td data-label="영어 표기"><input type="text" id="pz-${p.id}" value="${esc(v.zh)}" aria-label="${esc(p.ko)} 중국어 표기"></td><td data-label="단위"><input type="text" id="pu-${p.id}" value="${esc(v.unit)}" aria-label="${esc(p.ko)} 단위"></td><td data-label="가격 (원)"><input type="text" inputmode="numeric" class="num" id="pk-${p.id}" value="${esc(v.krw)}" placeholder="예: 990000" aria-label="${esc(p.ko)} 가격"></td><td>${custom?`<button class="del" data-del="${p.id}" type="button">삭제</button>`:""}</td></tr>`;}).join("");
+  $("procRows").querySelectorAll("input").forEach(i=>i.addEventListener("input",markDirty));
+  $("procRows").querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{const id=b.dataset.del;const ko=(ALL().find(p=>p.id===id)||{}).ko;commit();S.custom=S.custom.filter(p=>p.id!==id);delete S.procs[id];state.priceSel.delete(id);renderRows();saveAll(`‘${ko}’를 삭제하고 저장했어요`);}));
+}
+function addProc(){
+  const msg=$("addMsg");
+  try{
+    const ko=$("nKo").value.trim(),zh=$("nZh").value.trim();
+    $("nKo").removeAttribute("aria-invalid");$("nZh").removeAttribute("aria-invalid");
+    if(!ko||!zh){
+      const miss=!ko?"nKo":"nZh";$(miss).setAttribute("aria-invalid","true");$(miss).focus();
+      msg.className="err";msg.textContent=!ko?"시술명(한국어)을 넣어 주세요.":"영어 표기를 넣어 주세요. 답글에 이 이름이 들어가요.";return;}
+    if(ALL().some(p=>p.ko===ko)){msg.className="err";msg.textContent=`‘${ko}’는 이미 표에 있어요. 표에서 가격만 고치고 저장하세요.`;return;}
+    const id="c_"+Date.now().toString(36);
+    commit();
+    const cat=$("nCat").value||"other";
+    const alias=$("nKw").value.split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
+    alias.push(ko);zh.split(/\s+/).forEach(w=>{if(w.length>1)alias.push(w);});
+    S.custom.push({id,ko,zh,unit:$("nUnit").value.trim(),c:[cat],effZh:$("nEffZh").value.trim()||"[效果]",effKo:$("nEffKo").value.trim()||"[효과]",alias});
+    const krw=$("nKrw").value.replace(/[^0-9]/g,"");S.procs[id]={zh,unit:$("nUnit").value.trim(),krw};
+    renderRows();saveAll(`‘${ko}’를 추가하고 저장했어요`);
+    ["nKo","nZh","nUnit","nKrw","nEffZh","nEffKo","nKw"].forEach(i=>$(i).value="");
+    msg.className="ok";msg.textContent=`‘${ko}’를 표 맨 아래에 추가했어요.${krw?"":" 가격은 표에서 넣고 저장하세요."}`;
+    const row=$("pz-"+id).closest("tr");row.classList.add("new");row.scrollIntoView({block:"center",behavior:"smooth"});setTimeout(()=>row.classList.remove("new"),2500);
+  }catch(e){msg.className="err";msg.textContent="추가 중 오류가 났어요: "+(e&&e.message||e);}
+}
+function renderPriceChips(){
+  const ps=ALL().filter(p=>P(p).krw);
+  const sel=$("priceSelect");
+  const left=ps.filter(p=>!state.priceSel.has(p.id));
+  if(!ps.length){sel.innerHTML=`<option value="">병원 설정에서 가격을 넣고 저장하세요</option>`;sel.disabled=true;}
+  else{sel.disabled=!left.length;sel.innerHTML=`<option value="">${left.length?"시술을 선택하세요":"모두 넣었어요"}</option>`+left.map(p=>`<option value="${p.id}">${esc(p.ko)} — ${money(P(p).krw).ko}</option>`).join("");}
+  sel.value="";
+  $("priceChips").innerHTML=[...state.priceSel].map(id=>{const p=ALL().find(x=>x.id===id);if(!p)return "";return `<span class="selchip">${esc(p.ko)} · ${money(P(p).krw).ko}<button type="button" data-rm="${id}" aria-label="${esc(p.ko)} 빼기">×</button></span>`;}).join("");
+  $("priceChips").querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",()=>{state.priceSel.delete(b.dataset.rm);renderPriceChips();if(state.a)generate();}));
+}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---------- 분석 ---------- */
+function kwRe(w){return /^[\x00-\x7f]+$/.test(w)?new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:s|es)?\\b","i"):null;}
+function has(t,w){const r=kwRe(w);return r?r.test(t):t.includes(w.toLowerCase());}
+function analyze(text){
+  const t=text.toLowerCase();
+  const scores={},hits={};
+  for(const [k,v] of Object.entries(TYPES)){hits[k]=v.kw.filter(w=>has(t,w));scores[k]=hits[k].length;}
+  const concerns=Object.entries(CONCERNS).filter(([k,v])=>v.kw.some(w=>has(t,w))).map(([k])=>k);
+  const procs=ALL().filter(p=>p.alias.some(a=>has(t,a))).map(p=>p.id);
+  const medical=!!(MED.some(w=>has(t,w))||concerns.length||procs.length);
+  let type="T8",best=0;
+  if(scores.T7>0)type="T7";
+  else{for(const k of PRIORITY){if(scores[k]>best){best=scores[k];type=k;}}
+    if(type==="T8"&&medical)type=concerns.length?"T3":"T1";
+    if(scores.T3>0&&concerns.length&&(type==="T1"||type==="T4")&&scores.T3>=scores[type])type="T3";}
+  if(!medical&&scores.T13>0&&type!=="T10")type="T13";
+  const wantsPrice=scores.T2>0&&medical;
+  const busan=medical&&/\b(busan|jeju|daegu)\b|부산/i.test(text)&&!/\bseoul\b|서울/i.test(text);
+  if(busan)type="T12";
+  const rm=text.match(/\b(busan|jeju|daegu)\b/i);const region=rm?rm[1].charAt(0).toUpperCase()+rm[1].slice(1).toLowerCase():"";
+  return {type,scores,hits,concerns,procs,wantsPrice,busan,medical,region};
+}
+
+/* ---------- 문구 조각 {zh=영어, ko} — 골드제이 하우스 스타일 (영어) ----------
+   레퍼런스(Creatrip·MediOne·korea_in_study)는 흐름만 참고: 여행 글엔 진짜 도움 되는 팁 먼저, 홍보는 한 줄 이하.
+   영어권 톤: 친근하지만 과장 없이. 효과 단정·최상급 표현 금지. 이모지 0~2개. */
+const EMO={
+  face:["🙂","✨","🙌","",""],
+  bul:["- ","• ","✔️ ","→ "],
+  ok:["✅","✔️","👉"], ng:["❌","⚠️"],
+  tip:["📌","💡","Tip:"],
+  end:["🙂","✨","🙌","🇰🇷",""],
+  price:["💰","📋","🏷️"]
+};
+let E={};
+function newStyle(){E={};for(const k in EMO)E[k]=pick(EMO[k],rnd);E.pf=pick([0,1,2],rnd);}
+const V=arr=>pick(arr,rnd);
+const sp=x=>x?" "+x:"";
+const OPEN={
+  T1:[{zh:"Choosing a clinic in Seoul can be overwhelming{E}",ko:"서울에서 병원 고르기 막막하죠{E}"},{zh:"Totally get it, there are so many options{E}",ko:"완전 이해해요, 선택지가 너무 많죠{E}"},{zh:"Good question! A few things worth checking first{E}",ko:"좋은 질문이에요! 먼저 확인할 것들이 있어요{E}"}],
+  T2:[{zh:"Price is a big reason a lot of people come to Korea{E}",ko:"가격 때문에 한국에 오는 분들이 많죠{E}"},{zh:"Fair question{E}",ko:"충분히 궁금할 만해요{E}"},{zh:"Here's a rough idea of pricing{E}",ko:"대략적인 가격 알려드릴게요{E}"}],
+  T3:[{zh:"It really depends on what bothers you most{E}",ko:"제일 신경 쓰이는 게 뭔지에 따라 달라요{E}"},{zh:"Our director gets this question a lot{E}",ko:"원장님이 자주 받는 질문이에요{E}"},{zh:"Here's a quick breakdown{E}",ko:"간단히 정리해 드릴게요{E}"}],
+  T4:[{zh:"Love this combo{E}",ko:"이 조합 좋네요{E}"},{zh:"Agreed, natural-looking results are the goal{E}",ko:"동의해요, 자연스러운 결과가 목표죠{E}"},{zh:"Thanks for sharing your honest experience{E}",ko:"솔직한 후기 공유 감사해요{E}"}],
+  T5:[{zh:"Great question, let me break it down{E}",ko:"좋은 질문이에요, 나눠서 설명할게요{E}"},{zh:"This one gets misunderstood a lot{E}",ko:"오해가 많은 부분이에요{E}"},{zh:"Short answer: it depends. Here's the gist{E}",ko:"짧게 말하면 경우에 따라 달라요. 핵심은 이래요{E}"}],
+  T6:[{zh:"Totally normal to feel nervous on a first visit{E}",ko:"첫 방문이면 긴장되는 게 당연해요{E}"},{zh:"We hear this a lot{E}",ko:"이 걱정 정말 자주 들어요{E}"},{zh:"No worries, here's how it usually goes with us{E}",ko:"걱정 마세요, 저희는 보통 이렇게 해요{E}"}],
+  T9:[{zh:"It depends on what's causing it{E}",ko:"원인에 따라 달라요{E}"},{zh:"It works well for some people and less for others, so let's break it down{E}",ko:"잘 맞는 사람도 덜 맞는 사람도 있어서 나눠 볼게요{E}"},{zh:"Easiest way to think about it is by type{E}",ko:"타입별로 생각하면 쉬워요{E}"}],
+  T10:[{zh:"Glass skin isn't one secret, it's a routine{E}",ko:"광채 피부는 비결 하나가 아니라 루틴이에요{E}"},{zh:"Love this question{E}",ko:"이 질문 좋아요{E}"},{zh:"Sharing what we usually tell our patients{E}",ko:"저희가 환자분들께 자주 하는 얘기 공유해요{E}"}],
+  T11:[{zh:"Being upfront here{E}",ko:"솔직하게 말씀드릴게요{E}"},{zh:"Quick note from GOLD J{E}",ko:"골드제이에서 짧게 답해요{E}"}],
+  T12:[{zh:"Honest answer first{E}",ko:"솔직한 답부터 할게요{E}"},{zh:"Just to be upfront{E}",ko:"먼저 솔직하게 말씀드리면{E}"}],
+  T13:[{zh:"Exciting!{E}",ko:"설레겠어요!{E}"},{zh:"Great time to visit{E}",ko:"방문하기 좋은 시기예요{E}"},{zh:"A few picks from locals{E}",ko:"현지인 추천 몇 가지예요{E}"},{zh:"Ooh, you're going to love it{E}",ko:"분명 좋아하실 거예요{E}"}],
+  T7:[{zh:"",ko:""}],T8:[{zh:"",ko:""}]
+};
+const CTA=[
+  {zh:"If Seoul is on your route, feel free to keep us in mind{END}",ko:"서울 일정이 있으면 저희도 기억해 주세요{END}"},
+  {zh:"Happy to answer anything via DM{END}",ko:"디엠으로 뭐든 편하게 물어보세요{END}"},
+  {zh:"You can find before & afters on our profile{END}",ko:"프로필에 전후 사례 있어요{END}"},
+  {zh:"Drop a comment or DM anytime{END}",ko:"댓글이나 디엠 언제든 주세요{END}"},
+  {zh:"If you're in Seoul, come say hi at GOLD J{END}",ko:"서울 오시면 골드제이에 들러 주세요{END}"}
+];
+function diffPool(){
+  const a=[
+    V([{zh:"We check your skin before suggesting anything",s:"Skin check before any suggestion",ko:"피부를 보고 나서 제안"},{zh:"Your plan is built around your skin, not a set menu",s:"Plan built around your skin",ko:"정해진 패키지가 아닌 맞춤 설계"}]),
+    V([{zh:"We won't push treatments you don't need",s:"No upselling",ko:"불필요한 시술 권하지 않음"},{zh:"No pressure to add extras",s:"No pressure add-ons",ko:"추가 시술 강요 없음"}]),
+    V([{zh:"Prices are shared upfront",s:"Upfront pricing",ko:"가격 미리 안내"},{zh:"No surprise charges after the consult",s:"No surprise charges",ko:"상담 후 추가금 없음"}])
+  ];
+  if(S.doc)a.unshift(V([{zh:"Our director does both the consultation and the treatment",s:"Director consults & treats",ko:"원장님 직접 상담·시술"},{zh:"The same doctor sees you from consult to treatment",s:"Same doctor, consult to treatment",ko:"상담부터 시술까지 같은 의사"}]));
+  if(S.zh)a.push(V([{zh:"Consultations are available in English",s:"English consultations",ko:"영어 상담 가능"},{zh:"English support is available, so no language stress",s:"English support",ko:"영어 지원"}]));
+  return a;
+}
+function fill(s){return s.replace(/\{E\}/g,sp(E.face)).replace(/\{END\}/g,sp(E.end)).replace(/\{CITY\}/g,S.city||"Seoul").replace(/\{N\}～/g,"").replace(/\{C\}/g,S.clinic||"[Clinic name]").replace(/\{CK\}/g,S.clinicKo||"[병원명]");}
+function money(krw){const n=parseInt(krw,10);if(!n)return null;const usd=S.rate?Math.round(n*S.rate/10)*10:0;
+  return {zh:`₩${n.toLocaleString("en-US")}${usd?` (approx. $${usd.toLocaleString("en-US")})`:""}`,ko:`${(Math.round(n/1000)/10).toString()}만 원${usd?` (약 $${usd.toLocaleString("en-US")})`:""}`};}
+
+function procsFor(a,limit){
+  let ids=[...a.procs];
+  for(const c of a.concerns){for(const p of ALL()){if(p.c.includes(c)&&!ids.includes(p.id))ids.push(p.id);}}
+  return ids.slice(0,limit).map(id=>ALL().find(p=>p.id===id));
+}
+
+/* 여행 팁 (사실 확인된 일반 정보만) */
+const TIPS={
+  spring:{kw:["march","april","spring","cherry"],l:[{zh:"Early April is usually cherry blossom season. Yeouido and Seokchon Lake get packed, so go early in the morning.",ko:"4월 초가 보통 벚꽃 시즌이에요. 여의도·석촌호수는 붐비니 아침 일찍 가세요."}]},
+  may:{kw:["may","june"],l:[{zh:"May and June are great walking weather. Seoul Forest by day and Cheonggyecheon Stream at night are both easy wins.",ko:"5~6월은 걷기 좋은 날씨예요. 낮엔 서울숲, 밤엔 청계천 추천해요."}]},
+  summer:{kw:["july","august","summer","humid"],l:[{zh:"Summer is hot and humid, and July is monsoon season, so pack light clothes and a small umbrella.",ko:"여름은 덥고 습하고 7월은 장마라 가벼운 옷과 작은 우산 챙기세요."}]},
+  fall:{kw:["september","october","november","autumn","fall"],l:[{zh:"Autumn is the best season for palaces and Namsan. The leaves usually peak from late October to early November.",ko:"가을은 궁·남산 가기 제일 좋은 계절이에요. 단풍은 보통 10월 말~11월 초가 절정이에요."}]},
+  winter:{kw:["december","january","february","winter","cold","snow"],l:[{zh:"Winter gets properly cold (below freezing), so pack layers and gloves. Heat packs are sold at every convenience store.",ko:"겨울은 영하로 꽤 추워서 겹쳐 입을 옷과 장갑 챙기세요. 핫팩은 편의점마다 팔아요."}]},
+  pack:{kw:["pack","what to wear","weather","outfit"],l:[{zh:"Check the forecast a few days before. Temperature can swing a lot between day and night, so layers are your friend.",ko:"며칠 전에 날씨 확인하세요. 일교차가 커서 겹쳐 입는 게 좋아요."}]},
+  food:{kw:["food","eat","restaurant","cafe","resto","dinner","bbq"],l:[{zh:"For food, try Gwangjang Market (bindaetteok + mayak gimbap) and save one night for Korean BBQ.",ko:"음식은 광장시장(빈대떡+마약김밥) 가 보시고, 하루는 꼭 고기 드세요."},{zh:"Don't skip a late-night chimaek (fried chicken + beer). Convenience store snacks are a whole experience too.",ko:"밤에 치맥 꼭 해 보세요. 편의점 간식도 하나의 경험이에요."}]},
+  move:{kw:["subway","transport","get around","airport","map","taxi","metro"],l:[{zh:"Grab a T-money card at the airport or any convenience store, and use Naver Map or KakaoMap, since Google Maps directions are limited in Korea.",ko:"공항이나 편의점에서 티머니 카드 사고, 구글맵은 길찾기가 제한적이라 네이버지도·카카오맵 쓰세요."}]},
+  shop:{kw:["shopping","olive young","souvenir","buy","k-beauty"],l:[{zh:"For K-beauty shopping, the big Olive Young stores in busy areas like Myeongdong have the best stock, and many shops offer instant tax refunds with your passport.",ko:"K-뷰티 쇼핑은 명동 같은 번화가의 큰 올리브영이 재고가 많고, 여권 있으면 즉시 택스리펀 되는 곳이 많아요."}]},
+  plan:{kw:["itinerary","days","plan","route","first time"],l:[{zh:"Grouping your days by area saves a lot of travel time: Myeongdong/Jongno, Hongdae/Yeonnam, Seongsu, and Gangnam/Apgujeong.",ko:"지역별로 일정을 묶으면 이동 시간이 확 줄어요: 명동·종로, 홍대·연남, 성수, 강남·압구정."}]}
+};
+function travelTips(text){
+  const t=text.toLowerCase();const out=[];
+  const hit=Object.keys(TIPS).filter(k=>TIPS[k].kw.some(w=>new RegExp("\\b"+w+"\\b","i").test(t)));
+  const season=hit.some(k=>["spring","may","summer","fall","winter"].includes(k));
+  for(const k of hit){if(k==="pack"&&season)continue;out.push(V(TIPS[k].l));}
+  if(!out.length)out.push(V(TIPS.plan.l),V(TIPS.food.l));
+  return out.slice(0,2);
+}
+
+function build(a,type){
+  newStyle();
+  const L=[];const add=(zh,ko)=>L.push({zh:fill(zh),ko:fill(ko)});const addV=arr=>{const v=V(arr);add(v.zh,v.ko);};
+  const B=E.bul;
+  const o=pick(OPEN[type],rnd); if(o.zh)add(o.zh,o.ko);
+  const C=S.clinic||"[Clinic name]",CK=S.clinicKo||"[병원명]";
+  if(type==="T13"){
+    for(const tp of travelTips(state.text||""))add(tp.zh,tp.ko);
+    if(S.promo)addV([{zh:"If you have a free half day, a skin clinic visit is a fun K-beauty thing to try. Just keep stronger treatments away from your last 2–3 days.",ko:"반나절 여유가 있으면 피부과 체험도 재밌는 K-뷰티 코스예요. 강한 시술은 출국 2~3일 전엔 피하세요."},{zh:"A lot of visitors fit in a quick skin treatment too. Book it early in the trip so your skin has time to settle before you fly.",ko:"피부 시술을 같이 받는 여행자도 많아요. 피부가 진정될 시간이 있게 여행 초반에 잡으세요."}]);
+    addV([{zh:"Enjoy your trip{END}",ko:"즐거운 여행 되세요{END}"},{zh:"Have the best time in {CITY}{END}",ko:"{CITY}에서 좋은 시간 보내세요{END}"},{zh:"Safe travels{END}",ko:"안전한 여행 되세요{END}"}]);
+    return {lines:L,travel:true};
+  }
+  if(type==="T1"){
+    addV([{zh:"Here's what I'd check before booking:",ko:"예약 전에 이걸 확인해 보세요:"},{zh:"Before comparing prices, look at these:",ko:"가격 비교 전에 이것부터 보세요:"},{zh:"A quick checklist:",ko:"간단 체크리스트예요:"}]);
+    const items=[{zh:"Is the same doctor doing your consult and your treatment?",ko:"상담과 시술을 같은 의사가 하는지"},{zh:"Do they look at your skin before recommending anything?",ko:"피부를 보고 나서 시술을 권하는지"},{zh:"Are prices clear before you start?",ko:"시작 전에 가격이 명확한지"},{zh:"Can you ask follow-up questions in English after treatment?",ko:"시술 후에도 영어로 질문할 수 있는지"}];
+    for(const it of items.sort(()=>rnd()-.5).slice(0,3))add(`${E.ok} ${it.zh}`,`${E.ok} ${it.ko}`);
+  }
+  if(type==="T3"&&!a.concerns.length){
+    const age=(n,nk,ids,zh,ko)=>{const ps=ids.map(id=>ALL().find(p=>p.id===id)).filter(Boolean);add(`${B}${n}: ${zh} (${ps.map(p=>P(p).zh).join(", ")})`,`${B}${nk}: ${ko} (${ps.map(p=>p.ko).join(", ")})`);};
+    age("20s","20대",["juvelook","rejuran"],V(["focus on skin quality","build a good skin base"]),"피부결 관리 위주");
+    age("30s","30대",["ulthera","sofwave"],V(["early sagging and jawline care","start looking after your contour"]),"초기 처짐·윤곽 관리");
+    age("40s+","40대+",["ulthera","radiesse","re2o"],V(["lifting plus firmness together","a more complete anti-aging plan"]),"리프팅+탄력 함께");
+    addV([{zh:`${E.tip} If it's your first time, pick the 1–2 things that bother you most and start there.`,ko:`${E.tip} 처음이면 제일 신경 쓰이는 1~2가지부터 시작하세요.`},{zh:`${E.tip} No need to do everything at once.`,ko:`${E.tip} 한 번에 다 할 필요 없어요.`}]);
+  }
+  else if(type==="T3"){
+    addV([{zh:"Based on what you described, these are worth asking about:",ko:"말씀하신 상황이면 이걸 물어볼 만해요:"},{zh:"A few options to look into:",ko:"알아볼 만한 선택지예요:"}]);
+    for(const c of a.concerns.slice(0,3)){const ps=ALL().filter(p=>p.c[0]===c).slice(0,2);if(!ps.length)continue;
+      add(`${B}${CONCERNS[c].zh} → ${ps.map(p=>P(p).zh).join(", ")}`,`${B}${CONCERNS[c].ko} → ${ps.map(p=>p.ko).join(", ")}`);}
+    addV([{zh:"The right choice depends on your face shape and skin, so a consult is the best way to decide.",ko:"얼굴형·피부에 따라 달라서 상담 후 정하는 게 제일 좋아요."},{zh:"Everyone's skin is different, so our director checks first and then suggests a plan.",ko:"사람마다 달라서 원장님이 먼저 보고 계획을 제안해요."}]);
+  }
+  if(type==="T4"){
+    const ps=procsFor(a,2);
+    if(ps.length>=2){addV([{zh:`${P(ps[0]).zh} + ${P(ps[1]).zh} is a smart pairing!`,ko:`${ps[0].ko}+${ps[1].ko} 좋은 조합이에요!`},{zh:`${P(ps[0]).zh} and ${P(ps[1]).zh} is a combo we suggest a lot too.`,ko:`${ps[0].ko}와 ${ps[1].ko}는 저희도 자주 제안하는 조합이에요.`}]);
+      add(`${P(ps[0]).zh} works on ${ps[0].effZh}, while ${P(ps[1]).zh} covers ${ps[1].effZh}, so they complement each other nicely.`,`${ps[0].ko}는 ${ps[0].effKo}, ${ps[1].ko}는 ${ps[1].effKo} 담당이라 서로 보완돼요.`);}
+    else if(ps.length===1){add(`${P(ps[0]).zh} is mainly for ${ps[0].effZh}, and a lot of people come back for it${sp(E.end)}`,`${ps[0].ko}는 ${ps[0].effKo} 쪽이라 재방문이 많아요${sp(E.end)}`);}
+    else addV([{zh:"How it feels can vary a lot depending on your skin, so finding what suits you is key.",ko:"피부에 따라 느낌이 많이 달라서 나한테 맞는 걸 찾는 게 중요해요."},{zh:"Finding the combo that fits your skin is everything.",ko:"내 피부에 맞는 조합을 찾는 게 전부예요."}]);
+  }
+  if(type==="T5"){
+    add("[Key answer in 1–2 sentences: number of sessions / interval / shots]","[핵심 답 1~2문장: 횟수·간격·샷 수 기준]");
+    addV([{zh:"More shots isn't automatically better. Where and at what depth they're placed matters more.",ko:"샷 수가 많다고 좋은 게 아니라 위치와 깊이가 더 중요해요."},{zh:"In practice the energy and depth are adjusted to your skin, so it's not one-size-fits-all.",ko:"실제로는 피부에 맞춰 에너지·깊이를 조절해서 다 똑같지 않아요."}]);
+  }
+  if(type==="T6"){
+    if(S.zh)addV([{zh:`${C} offers English support, so aftercare instructions are explained clearly.`,ko:`${CK}은 영어 지원이 있어 사후관리 안내도 명확하게 해 드려요.`},{zh:"You can ask questions in English from the consult all the way to aftercare.",ko:"상담부터 사후관리까지 영어로 질문할 수 있어요."}]);
+    addV([{zh:"If you're worried about pain, just tell us beforehand and we'll adjust numbing and technique.",ko:"통증이 걱정되면 미리 말해 주세요, 마취·방식을 조절해요."},{zh:"You can talk through pain management with the director first, no need to tough it out.",ko:"통증 관리도 원장님과 먼저 상의할 수 있어요, 참지 않아도 돼요."}]);
+  }
+  if(type==="T9"){
+    const ps=procsFor(a,3);
+    if(ps.length>=2&&a.concerns.length){
+      const f9=V([0,1]);for(const p of ps.slice(0,3))add(f9?`${B}If it's [cause/type]: ${P(p).zh} (${p.effZh})`:`${B}[cause/type]: ${P(p).zh} is worth asking about`,`${B}[원인/타입]이면 → ${p.ko} (${p.effKo})`);
+    }else{
+      add(`${E.ok} Works better for: [who tends to see results]`,`${E.ok} 잘 맞는 경우: [어떤 경우 효과를 잘 느끼는지]`);
+      add(`${E.ng} Less effective for: [when results are limited]`,`${E.ng} 효과가 제한적인 경우: [어떤 경우인지]`);
+    }
+    addV([{zh:`${E.tip} Results and how long they last vary from person to person, so getting assessed first helps.`,ko:`${E.tip} 효과·유지 기간은 개인차가 있어서 먼저 진단받는 게 좋아요.`},{zh:`${E.tip} Figuring out your type before booking saves time and money.`,ko:`${E.tip} 예약 전에 내 타입을 아는 게 시간과 돈을 아껴요.`}]);
+  }
+  if(type==="T10"){
+    const ps=["juvelook","rejuran","geneo"].map(id=>ALL().find(p=>p.id===id)).filter(Boolean);
+    addV([{zh:"We think of it in two parts:",ko:"두 가지로 나눠서 생각해요:"},{zh:"Basically \"daily care + regular care\":",ko:"간단히 '매일 관리+정기 관리'예요:"}]);
+    addV([{zh:`${B}Daily: sunscreen first, gentle cleansing, solid hydration, and go easy on exfoliating`,ko:`${B}매일: 자외선 차단 1순위, 순한 세안, 충분한 보습, 각질 제거는 가볍게`},{zh:`${B}At home: SPF every day, moisturize well, don't scrub too hard`,ko:`${B}집에서: 매일 자외선 차단, 보습 잘하고, 세게 문지르지 않기`}]);
+    add(`${B}Regular care: ${ps.map(p=>`${P(p).zh} (${p.effZh})`).join(", ")}`,`${B}정기 관리: ${ps.map(p=>`${p.ko}(${p.effKo})`).join(", ")}`);
+    addV([{zh:`${E.tip} Good skin builds up over time, it's not a one-and-done thing.`,ko:`${E.tip} 좋은 피부는 시간이 쌓여서 되는 거예요.`},{zh:`${E.tip} Consistency beats doing a lot at once.`,ko:`${E.tip} 한 번에 많이보다 꾸준함이 이겨요.`}]);
+  }
+  if(type==="T11"){
+    addV([{zh:"We don't offer [treatment from the post], but if you're looking to improve [concern], these are worth a look:",ko:"[원글 시술]은 안 하지만, [고민]을 개선하고 싶다면 이걸 봐 보세요:"},{zh:"[treatment from the post] isn't on our menu, but for [concern] you could ask about:",ko:"[원글 시술]은 없지만 [고민]이라면 이걸 물어보세요:"}]);
+    for(const p of procsFor(a,3))add(`${B}${P(p).zh}: ${p.effZh}`,`${B}${p.ko}: ${p.effKo}`);
+    if(!a.concerns.length&&!a.procs.length)add(`${B}[alternative]: [what it does]`,`${B}[대체 시술]: [효과]`);
+  }
+  if(type==="T12"){
+    const r=a.region||"[city]",rk=a.region||"[원글 지역]";
+    addV([{zh:`We're only in {CITY}${S.loc?` (${S.loc})`:""}, so no ${r} branch for now.`,ko:`저희는 {CITY}${S.locKo?`(${S.locKo})`:""}에만 있어서 ${rk} 지점은 없어요.`},{zh:`GOLD J is a {CITY} clinic, so we don't have a location in ${r}.`,ko:`골드제이는 {CITY} 병원이라 ${rk}엔 지점이 없어요.`}]);
+    addV([{zh:"If your trip passes through {CITY}, we'd be happy to see you then{END}",ko:"{CITY}를 지나가는 일정이면 그때 뵐게요{END}"},{zh:"If you're ever in {CITY}, feel free to reach out{END}",ko:"{CITY}에 오시면 편하게 연락 주세요{END}"}]);
+    return {lines:L};
+  }
+  if(type==="T7"){
+    const ps=procsFor(a,2);const n=ps.length?ps:[PROCS[0],PROCS[4]];
+    addV([{zh:`${n.map(p=>P(p).zh).join(" and ")}! What stood out to our team was [what you actually noticed]${sp(E.end)}`,ko:`${n.map(p=>p.ko).join(", ")}요! 저희 팀이 특히 체감한 건 [실제 느낌]이었어요${sp(E.end)}`},{zh:`One vote for ${n.map(p=>P(p).zh).join(" + ")}. [what you actually noticed] made a real difference${sp(E.end)}`,ko:`${n.map(p=>p.ko).join("+")}에 한 표요. [실제 느낌]이 확실히 달랐어요${sp(E.end)}`}]);
+    return {lines:L,warnExp:true};
+  }
+  if(type==="T8"){
+    add("[one warm, genuine line reacting to the post]{E}","[원글에 대한 따뜻한 공감 한 줄]{E}");
+    return {lines:L};
+  }
+
+  /* 차별점 2개 */
+  const pool=diffPool().slice();const d=[];while(d.length<2&&pool.length){d.push(pool.splice(Math.floor(rnd()*pool.length),1)[0]);}
+  if(type!=="T6"){
+    const f=V([0,1]);
+    if(f===0)add(`At ${C}: ${d.map(x=>x.zh.charAt(0).toLowerCase()+x.zh.slice(1)).join(", and ")}.`,`${CK}은 ${d.map(x=>x.ko).join(", ")}`);
+    else{add(`What we do at ${C}:`,`${CK}의 방식:`);for(const x of d)add(`${B}${x.s}`,`${B}${x.ko}`);}
+  }
+  if(S.loc&&(type==="T1"||type==="T2"||type==="T6"))add(`📍 ${S.loc}`,`📍 ${S.locKo||S.loc}`);
+
+  /* 가격 */
+  let priceNote=null;
+  const sel=[...state.priceSel].map(id=>ALL().find(p=>p.id===id)).filter(p=>p&&P(p).krw);
+  if(sel.length){
+    const tz=S.tax?` (${S.tax})`:"",tk=S.tax?` (${S.tax==="VAT incl."?"부가세 포함":"부가세 별도"})`:"";
+    addV([{zh:`${E.price} Pricing${tz}:`,ko:`${E.price} 가격${tk}:`},{zh:`${E.price} For reference${tz}:`,ko:`${E.price} 참고 가격${tk}:`},{zh:`${E.price} Current prices${tz}:`,ko:`${E.price} 현재 가격${tk}:`}]);
+    for(const p of sel){const v=P(p),m=money(v.krw),u=v.unit;
+      const zh=[`${B}${v.zh}${u?` ${u}`:""}: ${m.zh}`,`${B}${v.zh}${u?` (${u})`:""} | ${m.zh}`,`${B}${v.zh}${u?`, ${u}`:""} — ${m.zh}`][E.pf];
+      add(zh,`${B}${p.ko}${u?` ${u}`:""} | ${m.ko}`);}
+    addV([{zh:"Final shot count is decided after we see your skin, and the quote you get is the final price.",ko:"최종 샷 수는 피부를 보고 정하고, 받은 견적이 최종 가격이에요."},{zh:"No extra charges after the consult, and we confirm the shot count with you first.",ko:"상담 후 추가금 없고, 샷 수도 먼저 확인해 드려요."}]);
+  }
+  else if(a.wantsPrice||type==="T2"){
+    addV([{zh:"Feel free to DM us for prices, we'll put together a quote for what you're interested in.",ko:"가격은 디엠 주시면 원하는 시술 기준으로 견적 드려요."},{zh:"Just DM us and we'll send pricing for the treatments you're curious about.",ko:"디엠 주시면 궁금한 시술 가격 보내 드려요."}]);
+    priceNote="가격 질문 글이에요. 금액을 넣으려면 아래 ‘가격 넣기’에서 시술을 고르세요.";
+  }
+  const c=pick(CTA,rnd);add(c.zh,c.ko);
+  return {lines:L,priceNote};
+}
+
+/* ---------- 검수 ---------- */
+const RISK=[["guarantee","효과 보장"],["guaranteed","효과 보장"],["100%","단정 수치"],["permanent","영구 효과 표현"],["no downtime","회복기간 없음 단정"],["zero downtime","회복기간 없음 단정"],["painless","통증 없음 단정"],["no pain","통증 없음 단정"],["no side effects","부작용 없음 단정"],["risk-free","위험 없음 단정"],["best clinic","최상급 표현"],["#1","최상급 표현"],["number one","최상급 표현"],["cheapest","최상급 가격 표현"],["always works","단정 표현"],["better than","비교 우위 표현"]];
+function check(zh,r){
+  const out=[];
+  const risks=RISK.filter(([w])=>zh.toLowerCase().includes(w));
+  if(risks.length)out.push(`<div class="alert warn">의료광고 주의 표현: ${risks.map(([w,k])=>`<b>${esc(w)}</b>(${k})`).join(", ")}</div>`);
+  if(/\[[^\]]+\]/.test(zh))out.push(`<div class="alert warn">대괄호 [ ] 빈칸이 남아 있어요. 답글 칸에서 직접 채워 주세요.</div>`);
+  if(state.type==="T11")out.push(`<div class="alert note">원글에 나온 시술 중 저희 병원에 없는 걸 [ ]에 적어 주세요. 비슷한 효과의 시술로 안내하되 “같은 효과”라고 단정하지 않는 게 좋아요.</div>`);
+  if(r&&r.warnExp)out.push(`<div class="alert note">‘팀 체험’ 답글은 실제로 시술받은 직원 경험일 때만 쓰세요.</div>`);
+  if(r&&r.priceNote)out.push(`<div class="alert note">${esc(r.priceNote)}</div>`);
+  if(state.type==="T13")out.push(`<div class="alert note">여행 글 답글이에요. 팁이 먼저, 홍보는 한 줄 이하로 두는 게 좋아요. 피부과 문장을 빼려면 병원 설정에서 ‘여행 글 답글에 피부과 한 줄 넣기’를 끄세요.</div>`);
+  if(state.a&&state.a.busan&&state.type!=="T12")out.push(`<div class="alert note">원글이 서울 외 지역(부산 등) 이야기예요. 답글을 달지 않거나 “서울 일정이 있으면” 식으로 다듬는 걸 권해요.</div>`);
+  if(zh.length>480)out.push(`<div class="alert note">답글이 ${zh.length}자예요. 스레드는 한 글에 500자까지만 들어가니 줄여 주세요.</div>`);
+  if(!out.length)out.push(`<div class="alert ok">주의 표현·빈칸 없음. 게시 전 한 번만 읽어 주세요.</div>`);
+  $("checks").innerHTML=out.join("");
+}
+
+/* ---------- 화면 ---------- */
+const state={a:null,type:null,text:"",priceSel:new Set()};
+function renderAnalysis(){
+  const a=state.a;
+  const typeChips=Object.entries(TYPES).map(([k,v])=>`<button class="chip${k===state.type?" on":""}" data-t="${k}" aria-pressed="${k===state.type}">${k} ${v.name}</button>`).join("");
+  $("typeLine").textContent=`유형: ${state.type} ${TYPES[state.type].name}`;
+  const hit=(a.hits[state.type]||[]);
+  $("analysis").innerHTML=`
+    <div><h2 style="margin-bottom:6px">분류 결과</h2><div class="chips">${typeChips}</div>
+    <p class="kw" style="margin:6px 0 0">${hit.length?`감지 키워드: ${hit.map(esc).join(", ")}`:"직접 일치한 키워드 없음 — 유형을 확인해 주세요."}</p></div>
+    <div class="row">${a.concerns.map(c=>`<span class="tag">고민 · ${CONCERNS[c].ko}</span>`).join("")}${a.procs.map(id=>`<span class="tag">시술 언급 · ${ALL().find(p=>p.id===id).ko}</span>`).join("")}${a.wantsPrice?`<span class="tag">가격 질문</span>`:""}</div>`;
+  $("analysis").querySelectorAll("[data-t]").forEach(b=>b.addEventListener("click",()=>{state.type=b.dataset.t;renderAnalysis();generate();}));
+}
+let lastR=null;
+function generate(){
+  lastR=build(state.a,state.type);
+  const zh=lastR.lines.map(l=>l.zh).join("\n"),ko=lastR.lines.map(l=>l.ko).join("\n");
+  $("outZh").value=zh;$("outKo").textContent=ko;state.edited=false;$("koNote").hidden=true;
+  $("copyBtn").disabled=false;$("rerollBtn").disabled=false;$("copyMsg").textContent="";
+  check(zh,lastR);
+}
+let sampleFn=null,trCtl=null,trOff=false;
+(async()=>{try{sampleFn=window.claude?await window.claude.use("sample"):null;}catch(e){sampleFn=null;}})();
+async function translatePost(text){
+  const box=$("postKo"),out=$("postKoText");
+  if(trCtl)trCtl.abort();
+  const han=(text.match(/[가-힣]/g)||[]).length, cjk=(text.match(/[A-Za-z]/g)||[]).length/2;
+  if(trOff||!sampleFn||han>=cjk){box.hidden=true;return;}
+  box.hidden=false;out.textContent="해석하는 중...";
+  const ctl=trCtl=new AbortController();
+  try{
+    const {text:t}=await sampleFn(`다음 영어 스레드 글을 자연스러운 한국어로 번역해. 의미만 정확히, 이모지는 유지, 설명·머리말 없이 번역문만 출력해.\n\n${text}`,{modelTier:"quick",signal:ctl.signal,onText:({text:x})=>{if(trCtl===ctl)out.textContent=x;}});
+    if(trCtl===ctl)out.textContent=t;
+  }catch(e){
+    if(trCtl!==ctl||e.code==="aborted")return;
+    if(e.code==="not_granted"){trOff=true;box.hidden=true;return;}
+    out.textContent=e.code==="rate_limited"?"요청이 많아 해석을 잠시 못 했어요. 잠시 후 다시 ‘답글 만들기’를 눌러 주세요.":"해석을 불러오지 못했어요.";
+  }
+}
+const mq=matchMedia("(max-width:760px)");
+function setTab(t){
+  document.querySelectorAll("[data-pane]").forEach(el=>el.classList.toggle("on",el.dataset.pane===t));
+  document.querySelectorAll(".tabbar [data-tab]").forEach(b=>{if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  if(t==="set")$("settingsBox").open=true;
+  if(mq.matches)window.scrollTo(0,0);
+}
+document.querySelectorAll(".tabbar [data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+$("typeBtn").addEventListener("click",()=>{setTab("in");setTimeout(()=>$("analysis").scrollIntoView({block:"start"}),0);});
+setTab("in");
+function run(auto){
+  const text=$("post").value.trim();
+  if(!text){$("outZh").value="";$("outZh").placeholder="원글을 먼저 붙여넣어 주세요.";return;}
+  state.text=text;state.priceSel.clear();renderPriceChips();state.a=analyze(text);state.type=state.a.type;seed=(Date.now()%2147483646)+1;
+  renderAnalysis();generate();
+  if(auto!==true)translatePost(text);else $("postKo").hidden=true;
+  if(auto!==true&&mq.matches)setTab("out");
+}
+$("goBtn").addEventListener("click",()=>run());
+let editT=null;
+$("outZh").addEventListener("input",()=>{if(!lastR)return;state.edited=true;$("koNote").hidden=false;$("copyMsg").textContent="";clearTimeout(editT);editT=setTimeout(()=>check($("outZh").value,{priceNote:lastR.priceNote,warnExp:lastR.warnExp}),300);});
+$("rerollBtn").addEventListener("click",()=>{if(state.edited&&!confirmReroll())return;seed=(seed+7919)%2147483646+1;generate();});
+function confirmReroll(){const b=$("rerollBtn");if(b.dataset.armed){delete b.dataset.armed;b.textContent="문구 바꾸기";return true;}b.dataset.armed="1";b.textContent="수정한 내용이 사라져요. 한 번 더 누르기";setTimeout(()=>{delete b.dataset.armed;b.textContent="문구 바꾸기";},4000);return false;}
+$("clearBtn").addEventListener("click",()=>{$("post").value="";$("post").focus();});
+$("post").addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter")run();});
+$("post").addEventListener("input",()=>{if(trCtl){trCtl.abort();trCtl=null;}$("postKo").hidden=true;});
+$("copyBtn").addEventListener("click",async()=>{
+  const t=$("outZh").value;
+  try{await navigator.clipboard.writeText(t);$("copyMsg").textContent="복사했어요";}
+  catch(e){$("outZh").focus();$("outZh").select();$("copyMsg").textContent="선택해 뒀어요. Ctrl+C로 복사하세요";}
+});
+
+/* 예시 원글 (스크린샷 유형을 바탕으로 다시 쓴 예시) */
+const SAMPLES=[
+  ["예시 · 병원 추천","Going to Seoul in December for the first time. Any skin clinic recs that speak English and don't upsell? 🙏"],
+  ["예시 · 가격","How much is Ulthera in Korea? Heard it's like half the price of back home"],
+  ["예시 · 고민별","I'm in my 30s and my jawline is getting saggy, pores too. What should I get done in Seoul?"],
+  ["예시 · 상식","How many sessions of Rejuran do you need and how long does it last?"],
+  ["예시 · 통증·영어","Want to try a Korean derm but I'm scared of pain and I don't speak Korean lol"],
+  ["예시 · 적합 여부","Does Potenza actually work for acne scars or is it just hype?"],
+  ["예시 · 홈케어","How do Korean girls get that glass skin?? Drop your skincare secrets"],
+  ["예시 · 여행 추천","PLS drop your best Seoul recs! Food, cafes, things to do. Going early May for 5 days ✈️"],
+  ["예시 · 여행 날씨","First time in Korea next week in December. What should I pack for the weather?"],
+  ["예시 · 지방 병원","Any good skin clinic in Busan? Staying there for a week"],
+  ["예시 · 일상","Monday again and I'm surviving on iced americano"]
+];
+$("samples").innerHTML=SAMPLES.map((s,i)=>`<button class="chip" data-s="${i}">${s[0]}</button>`).join("");
+$("samples").querySelectorAll("[data-s]").forEach(b=>b.addEventListener("click",()=>{$("post").value=SAMPLES[b.dataset.s][1];run();}));
+
+const REFS=[
+  {h:"creatrip.global",n:"크리에이트립 · 여행 글 답글"},
+  {h:"medione_medical_global",n:"메디원 메디컬센터 · 일상 글 공감 답글"},
+  {h:"korea_in_study",n:"한국 여행·생활 정보"},
+  {h:"chingu_mobile",n:"친구모바일 · 여행 팁형 답글"},
+  {h:"essential_clinic_en",n:"에센셜클리닉 · 사당"},
+  {h:"drevers_global",n:"닥터에버스클리닉"},
+  {h:"gu_clinic_global",n:"G.U. 클리닉"},
+  {h:"ppeum_global_official",n:"쁨글로벌클리닉"}
+];
+$("refList").innerHTML=REFS.map(r=>`<li><a href="https://www.threads.com/@${r.h}" target="_blank" rel="noopener noreferrer"><span class="h">@${esc(r.h)}</span>${r.n?`<span class="n">${esc(r.n)}</span>`:""}</a></li>`).join("");
+
+bindSettings();
+$("post").value=SAMPLES[0][1];run(true);
+
+})();
+</script>
+</body>
+</html>
