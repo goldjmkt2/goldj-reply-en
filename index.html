@@ -222,7 +222,6 @@ button.ai{border-color:var(--gold);color:var(--gold);font-weight:700}
     <section class="panel" aria-labelledby="inTitle" data-pane="in">
       <h2 id="inTitle">1. 원글</h2>
       <p class="mobile-only kw" style="margin:0">원글 칸을 길게 눌러 붙여넣은 뒤 ‘답글 만들기’를 누르세요.</p>
-      <div class="chips" id="samples"></div>
       <textarea id="post" placeholder="스레드 원글을 붙여넣으세요 (영어·한국어 모두 가능)"></textarea>
       <div class="postko" id="postKo" hidden aria-live="polite"><span class="lbl">한국어 해석</span><span id="postKoText"></span></div>
       <div class="row">
@@ -784,22 +783,6 @@ $("copyBtn").addEventListener("click",async()=>{
   catch(e){$("outZh").focus();$("outZh").select();$("copyMsg").textContent="선택해 뒀어요. Ctrl+C로 복사하세요";}
 });
 
-/* 예시 원글 (스크린샷 유형을 바탕으로 다시 쓴 예시) */
-const SAMPLES=[
-  ["예시 · 병원 추천","Going to Seoul in December for the first time. Any skin clinic recs that speak English and don't upsell? 🙏"],
-  ["예시 · 가격","How much is Ulthera in Korea? Heard it's like half the price of back home"],
-  ["예시 · 고민별","I'm in my 30s and my jawline is getting saggy, pores too. What should I get done in Seoul?"],
-  ["예시 · 상식","How many sessions of Rejuran do you need and how long does it last?"],
-  ["예시 · 통증·영어","Want to try a Korean derm but I'm scared of pain and I don't speak Korean lol"],
-  ["예시 · 적합 여부","Does Potenza actually work for acne scars or is it just hype?"],
-  ["예시 · 홈케어","How do Korean girls get that glass skin?? Drop your skincare secrets"],
-  ["예시 · 여행 추천","PLS drop your best Seoul recs! Food, cafes, things to do. Going early May for 5 days ✈️"],
-  ["예시 · 여행 날씨","First time in Korea next week in December. What should I pack for the weather?"],
-  ["예시 · 지방 병원","Any good skin clinic in Busan? Staying there for a week"],
-  ["예시 · 일상","Monday again and I'm surviving on iced americano"]
-];
-$("samples").innerHTML=SAMPLES.map((s,i)=>`<button class="chip" data-s="${i}">${s[0]}</button>`).join("");
-$("samples").querySelectorAll("[data-s]").forEach(b=>b.addEventListener("click",()=>{$("post").value=SAMPLES[b.dataset.s][1];run();}));
 
 const REFS=[
   {h:"creatrip.global",n:"크리에이트립 · 여행 글 답글"},
@@ -814,7 +797,7 @@ const REFS=[
 $("refList").innerHTML=REFS.map(r=>`<li><a href="https://www.threads.com/@${r.h}" target="_blank" rel="noopener noreferrer"><span class="h">@${esc(r.h)}</span>${r.n?`<span class="n">${esc(r.n)}</span>`:""}</a></li>`).join("");
 
 bindSettings();
-$("post").value=SAMPLES[0][1];run(true);
+renderPriceChips();
 
 })();
 </script>
